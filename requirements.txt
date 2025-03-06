@@ -1,7 +1,3 @@
 flask
 gunicorn
 requests
-numpy
-pandas  # (if you're working with data)
-scikit-learn  # (if you're using machine learning)
-flask-cors  # (if handling CORS)
