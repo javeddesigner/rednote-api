@@ -32,7 +32,7 @@ def home():
 def download():
     post_url = request.args.get('url')
     if not post_url:
-        return jsonify({"success": False, "error": "No URL provided"}), 400
+        return jsonify({"success": False, "error": "No URL provided"}), 10000
     
     video_url = extract_video_url(post_url)
     if video_url:
