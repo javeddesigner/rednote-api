@@ -1,33 +1,23 @@
+from flask import Flask, request, send_file, jsonify
 import os
-import requests
-from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-@app.route("/download")
-def download():
-    url = request.args.get("url")
-    if not url:
-        return jsonify({"error": "No URL provided"}), 400
+# Root route to check if API is running
+@app.route("/")
+def home():
+    return "API is running!", 200
 
-    filename = url.split("/")[-1]  # Extract filename from URL
-    filepath = os.path.join("downloads", filename)  # Save in 'downloads' folder
+# Example API route
+@app.route("/download", methods=["GET"])
+def download_file():
+    file_path = "example.txt"  # Change this to your actual file path
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        return jsonify({"error": "File not found"}), 404
 
-    try:
-        response = requests.get(url, stream=True)
-        response.raise_for_status()
-        
-        os.makedirs("downloads", exist_ok=True)  # Ensure folder exists
-
-        with open(filepath, "wb") as file:
-            for chunk in response.iter_content(chunk_size=1024):
-                file.write(chunk)
-
-        return jsonify({"message": "Download successful", "filepath": filepath})
-
-    except requests.exceptions.RequestException as e:
-        return jsonify({"error": str(e)}), 500
-
+# Run the app (only needed for local testing)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
